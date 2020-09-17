@@ -85,8 +85,20 @@ Cypress.Commands.add('apiUpdateConfig', (newConfig = {}) => {
             body: config,
         }).then((updateResponse) => {
             expect(updateResponse.status).to.equal(200);
-            return cy.wrap({config: response.body});
+            return cy.apiGetConfig();
         });
+    });
+});
+
+Cypress.Commands.add('apiReloadConfig', () => {
+    // # Reload the config
+    return cy.request({
+        url: '/api/v4/config/reload',
+        headers: {'X-Requested-With': 'XMLHttpRequest'},
+        method: 'POST',
+    }).then((reloadResponse) => {
+        expect(reloadResponse.status).to.equal(200);
+        return cy.apiGetConfig();
     });
 });
 
@@ -103,7 +115,7 @@ Cypress.Commands.add('apiGetAnalytics', () => {
 
     return cy.request('/api/v4/analytics/old').then((response) => {
         expect(response.status).to.equal(200);
-        cy.wrap({analytics: response.body});
+        return cy.wrap({analytics: response.body});
     });
 });
 
@@ -114,7 +126,7 @@ Cypress.Commands.add('apiInvalidateCache', () => {
         method: 'POST',
     }).then((response) => {
         expect(response.status).to.equal(200);
-        cy.wrap(response);
+        return cy.wrap(response);
     });
 });
 
